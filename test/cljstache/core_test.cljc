@@ -96,7 +96,9 @@
 ;; Render Tests
 
 (deftest test-render-simple
-  (is (= "Hello, Felix" (render "Hello, {{name}}" {:name "Felix"}))))
+  (is (= "Hello, Felix" (render "Hello, {{name}}" {:name "Felix"})))
+  (testing "test render string key"
+    (is (= "Hello, Felix" (render "Hello, {{name}}" {"name" "Felix"})))))
 
 (deftest test-render-with-dollar-sign
   (is (= "Hello, $Felix!" (render "Hello, {{! This is a comment.}}{{name}}!"
@@ -223,7 +225,10 @@
 
 (deftest test-render-tag-with-dotted-name-like-section
   (is (= "Hello, Felix" (render "Hello, {{felix.name}}"
-                                {:felix {:name "Felix"}}))))
+                                {:felix {:name "Felix"}})))
+  (testing "now with string keys"
+    (is (= "Hello, Felix" (render "Hello, {{felix.name}}"
+                            {:felix {"name" "Felix"}})))))
 
 (deftest test-render-multiple-sections
   (is (= "Hello\n\nFelix\n\nFelix\n\n!"

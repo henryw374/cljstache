@@ -231,7 +231,7 @@
                                         (name k) "\\s*\\}\\}"))
                  indent (nth (first (re-seq (re-pattern regex) template)) 2)]
              [[(str "\\{\\{>\\s*" (name k) "\\s*\\}\\}")
-               (first (process-set-delimiters (indent-partial (str (k partials))
+               (first (process-set-delimiters (indent-partial (str (get partials k))
                                                               indent) {}))]]))))
 
 (defn- include-partials
@@ -329,7 +329,7 @@
                           #(let [var-name (nth % 2)
                                  var-k (keyword var-name)
                                  var-type (second %)
-                                 var-value (var-k data)
+                                 var-value (or (get data var-k) (get data var-name)) 
                                  var-value (if (fn? var-value)
                                              (render-template
                                               (var-value)
@@ -355,7 +355,10 @@
 (defn- path-data
   "Extract the data for the supplied path."
   [elements data]
-  (get-in data (map keyword elements)))
+  (reduce (fn [r n]
+            (or (get r (keyword n)) (get r n))) 
+    data 
+    elements))
 
 (defn- convert-path
   "Convert a tag with a dotted name to nested sections, using the

@@ -1,3 +1,8 @@
+2.1 (2022-11-03)
+============
+* Data passed to render can have string keys
+
+
 2.0.1 (2017-10-07)
 ============
 * Fixed behavior of conditionals to treat strings as atomic
