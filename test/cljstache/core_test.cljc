@@ -230,6 +230,10 @@
     (is (= "Hello, Felix" (render "Hello, {{felix.name}}"
                             {:felix {"name" "Felix"}})))))
 
+(deftest test-string-section-data
+  (is (= "Hello Felix"
+        (render "Hello {{#foo.bar}}{{felix.name}}{{/foo.bar}}" {"foo" {"bar" "yo"} :felix {:name "Felix"}}))))
+
 (deftest test-render-multiple-sections
   (is (= "Hello\n\nFelix\n\nFelix\n\n!"
          (render "Hello\n\n{{#felix}}{{name}}{{/felix}}\n\n{{#felix}}{{name}}{{/felix}}\n\n!" {:felix {:name "Felix"}})))
