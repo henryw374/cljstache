@@ -231,7 +231,7 @@
                                         (name k) "\\s*\\}\\}"))
                  indent (nth (first (re-seq (re-pattern regex) template)) 2)]
              [[(str "\\{\\{>\\s*" (name k) "\\s*\\}\\}")
-               (first (process-set-delimiters (indent-partial (str (k partials))
+               (first (process-set-delimiters (indent-partial (str (get partials k))
                                                               indent) {}))]]))))
 
 (defn- include-partials
@@ -329,7 +329,7 @@
                           #(let [var-name (nth % 2)
                                  var-k (keyword var-name)
                                  var-type (second %)
-                                 var-value (var-k data)
+                                 var-value (or (get data var-k) (get data var-name)) 
                                  var-value (if (fn? var-value)
                                              (render-template
                                               (var-value)
@@ -355,7 +355,10 @@
 (defn- path-data
   "Extract the data for the supplied path."
   [elements data]
-  (get-in data (map keyword elements)))
+  (reduce (fn [r n]
+            (or (get r (keyword n)) (get r n))) 
+    data 
+    elements))
 
 (defn- convert-path
   "Convert a tag with a dotted name to nested sections, using the
@@ -429,18 +432,18 @@
 (defn- preprocess
   "Preprocesses template and data (e.g. removing comments)."
   [template data partials]
-  (let [[template data] (delimiter-preprocess template data)
-        template (join-standalone-delimiter-tags template)
-        [template data] (process-set-delimiters template data)
-        template (join-standalone-tags template)
-        template (remove-comments template)
-        template (include-partials template partials)
-        template (convert-paths template data)]
-    [template data]))
+  (let [[template1 data1] (delimiter-preprocess template data)
+        template2 (join-standalone-delimiter-tags template1)
+        [template3 data2] (process-set-delimiters template2 data1)
+        template4 (join-standalone-tags template3)
+        template5 (remove-comments template4)
+        template6 (include-partials template5 partials)
+        template7 (convert-paths template6 data2)]
+    [template7 data2]))
 
 (defn- render-section
   [section data partials]
-  (let [section-data ((keyword (:name section)) data)]
+  (let [section-data (or (get data (:name section)) ((keyword (:name section)) data))]
     (if (:inverted section)
       (if (or (and (seqable? section-data) (empty? section-data))
               (not section-data))
@@ -456,14 +459,14 @@
                                    (map? section-data) [section-data]
                                    (seqable? section-data) (seq section-data)
                                    :else [{}])
-                section-data (if (map? (first section-data))
+                section-data1 (if (map? (first section-data))
                                section-data
                                (map (fn [e] {(keyword ".") e})
                                     section-data))
-                section-data (map #(conj data %) section-data)]
+                section-data2 (map #(conj data %) section-data1)]
             (map-str (fn [m]
                        (render-template (:body section) m partials false))
-                     section-data)))))))
+                     section-data2)))))))
 
 (defn- render-template
   "Renders the template with the data and partials."

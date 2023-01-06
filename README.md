@@ -21,6 +21,8 @@ To render a template, just pass a template string and a map of data to `render`:
 (render "Hello, {{name}}!" {:name "Felix"})
 ```
 
+The map of data can have keyword or string keys
+
 On the JVM, you can also render a resource from the classpath like this:
 
 ```clj
