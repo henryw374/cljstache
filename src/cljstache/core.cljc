@@ -51,9 +51,8 @@
   #?(:clj
      ([^java.util.regex.Matcher m offset]
       (when (.find m offset)
-        (let [match (.toMatchResult m)]
-          {:match-start (.start match)
-           :match-end (.end match)}))))
+        {:match-start (.start m)
+         :match-end (.end m)})))
   #?(:cljs
      ([[m s] offset]
       (when-let [match (.exec m (subs s offset))]
