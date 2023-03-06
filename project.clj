@@ -1,7 +1,7 @@
 (defproject cljstache "2.0.7-SNAPSHOT"
   :min-lein-version "2.5.2"
   :description "{{ mustache }} for Clojure[Script]"
-  :url "http://github.com/fotoetienne/cljstache"
+  :url "http://github.com/henryw374/cljstache"
   :license {:name "GNU Lesser General Public License 2.1"
             :url "http://www.gnu.org/licenses/lgpl-2.1.txt"
             :distribution :repo}
